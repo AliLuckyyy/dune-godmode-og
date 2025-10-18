@@ -3,48 +3,35 @@ name: Dune Daily Godmode
 on:
   schedule:
     - cron: '0 0 * * *'  # هر روز ساعت 00:00 UTC اجرا میشه
-  workflow_dispatch:     # این خط اجازه میده دستی هم اجرا بشه
+  workflow_dispatch:     # اجازه اجرای دستی
 
 jobs:
   run_dune_query:
-    runs-on: ubuntu-latest  # سیستم مجازی برای اجرای workflow
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
-        # محتویات repo روی سیستم مجازی آماده میشه
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
-        # نصب محیط Python
 
       - name: Install dependencies
         run: pip install requests
-        # نصب کتابخانه Python که برای API لازم داریم
 
       - name: Run Dune Query
         env:
           DUNE_API_KEY: ${{ secrets.DUNE_API_KEY }}
         run: python run_dune.py
-        # اجرای اسکریپت Python که کوئری رو اجرا میکنه
 
-      - name: Commit output
+      - name: Commit and Push
         run: |
           git config --local user.name "github-actions"
-          git config --local user.email "github-actions@github.com"
-          git add dune_output_*.json
+          git config --local user.email "actions@github.com"
+          git add dune_output_$(date +'%Y-%m-%d').json
           git commit -m "Update daily Dune output" || echo "No changes"
-          git push
-        # فایل JSON خروجی رو به repo اضافه و commit میکنه
-        - name: Commit and Push
-  run: |
-    git config --local user.name "github-actions"
-    git config --local user.email "actions@github.com"
-    git add dune_output_$(date +'%Y-%m-%d').json
-    git commit -m "Update daily Dune output"
-    git push https://$GH_PAT@github.com/AliLuckyyy/dune-godmode-og.git HEAD:main
-  env:
-    GH_PAT: ${{ secrets.GH_PAT }}
-
+          git push https://$GH_PAT@github.com/AliLuckyyy/dune-godmode-og.git HEAD:main
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
