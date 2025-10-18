@@ -26,12 +26,12 @@ jobs:
           DUNE_API_KEY: ${{ secrets.DUNE_API_KEY }}
         run: python run_dune.py
 
-      - name: Commit and Push
+      - name: Commit and Push JSON Output
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
         run: |
           git config --local user.name "github-actions"
           git config --local user.email "actions@github.com"
-          git add dune_output_$(date +'%Y-%m-%d').json
+          git add dune_output_*.json
           git commit -m "Update daily Dune output" || echo "No changes"
           git push https://$GH_PAT@github.com/AliLuckyyy/dune-godmode-og.git HEAD:main
