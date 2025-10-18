@@ -38,3 +38,13 @@ jobs:
           git commit -m "Update daily Dune output" || echo "No changes"
           git push
         # فایل JSON خروجی رو به repo اضافه و commit میکنه
+        - name: Commit and Push
+  run: |
+    git config --local user.name "github-actions"
+    git config --local user.email "actions@github.com"
+    git add dune_output_$(date +'%Y-%m-%d').json
+    git commit -m "Update daily Dune output"
+    git push https://$GH_PAT@github.com/AliLuckyyy/dune-godmode-og.git HEAD:main
+  env:
+    GH_PAT: ${{ secrets.GH_PAT }}
+
